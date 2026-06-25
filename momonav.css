@@ -1,0 +1,317 @@
+/* =========================================================
+   ももなぶブログ カスタムCSS(はてなブログ「デザインCSS」貼付用)
+   2026/06/13 みにまろ作成 / 2026/06/15 H2すっきり化・記事タイトル拡大・開示文の段落間隔
+   2026/06/17 著者バイライン非表示・CTAバナー下線除去を追加
+   2026/06/18 一覧サムネイルを1200:630横長比率に変更
+   2026/06/18 記事下「関連記事」サムネは正方形でくっきり(元が100px正方形ミニサムネのため横長化は不可)
+   2026/06/20 一覧をカード型グリッドに変更(サムネ上・タイトル・説明/スマホ1列・PC2列)。個別30pxが一覧に波及する崩れも解消
+   2026/06/20 カード微調整: SP(〜639px)のみタイトル1.3倍(1.37em)・PCは触らず1.05em(カード既定)・説明文(冒頭リード)はPC/SPとも非表示
+   2026/06/20 SP一覧の右余白を解消＝真因はテーマSPの .archive-entry-header{width:calc(100%-90px);float:right}(横並び前提)。width:100%/float:noneで打ち消し全幅化(justifyは不要で撤回)
+   2026/06/20 ブログタイトルをヘッダ画像(header.png透過2400×480・ももなぶの〜入り)に。#blog-title-content非表示+#blog-titleにbackground center/contain。PC高さ110(150と75の中間・数字で微調整)/SP80
+   2026/06/20 SPのみ申込ガイドカードを縦並び(画像上・テキスト下)に。インラインdisplay:flexを属性セレクタ+!importantで上書き(PCは横並びのまま)
+   2026/06/20 ヘッダロゴをクリッカブルに。#title a(href=トップ)を#blog-title全面にabsolute+text-indentで透明展開→画像クリックでトップへ
+   2026/06/20 スマホのみ記事ページのタイトル(H1=.entry-title a)を85%(30px→25.5px)に。一覧カードのタイトル(.archive-entry)は別定義で不変
+   2026/06/20 サイドバーのモジュール上下間隔(.hatena-module margin-bottom)を記事一覧カードのgapと同じ(SP18px/PC22px)に
+   2026/06/20 記事内シミュレータカードにCAL.png追加→PC画像左/テキスト右のflex横並び(申込カードと統一)。画像は<img>不可(はてなが本文imgを別リンクでラップ→aネスト分裂)なのでCSS背景span(aspect-ratio:1200/534)。SPは縦並び(tools.momonav.com属性セレクタ)
+   2026/06/24 ハブ(204036)カードを全ページ<img>flex型に統一(背景span方式は実機Safariで潰れたため)
+   2026/06/24 ★重大修正: SP縦並びが効かない真因=はてなが編集画面経由の記事でstyleを"display: flex"(スペース有)に整形し、セレクタ[style*="display:flex"](完全一致)が外れていた。申込/ハブ/シミュレータの3カードのSP縦並びを1ブロックに統合し、セレクタを[style*="display"](部分一致=スペース有無どちらも拾う)に変更
+   2026/06/25 カードSP縦並びCSSをhref個別指定→**全カード一括の汎用ルール**(a[style*="display"]のみ)に。今後カードを足してもCSS変更不要。関連記事カード(子供のスマホはいつから等)も自動で縦並び・PC横並びに統一
+   ---------------------------------------------------------
+   【適用先】はてな[デザイン]→カスタマイズ→[デザインCSS]欄
+     ・既存の <system section="theme"...> の @import ブロックは残し、その「下」に貼る
+     ・[デザイン]→[スマートフォン]→[詳細設定]→「レスポンシブデザイン」にチェック必須
+   【正本】このファイル momonav/momonav_custom.css = 唯一の正本。変更時はボクが全文を表示し、うた様は箱の中身をこの全文で丸ごと置き換える(差分継ぎ足しはしない)
+   【土台テーマ】Minimalism(theme id: 8599973812270629022)
+   【方針】主婦向け家計ブログ・白基調+コーラル差し色・スマホファースト・本文大きめ
+   【文字】本文18px / line-height1.9(スマホ縮小はしない=スマホが基準)
+   【配色】白#fff / 本文濃グレー#3a3a3a / 差し色コーラル#e8918c
+   【CTAボタン】<a class="momo-cta"> でコーラルボタン化
+     ※申込ページの既存ボタンはインラインstyleで#bf0000のまま(統一するなら後で差し替え)
+   【未確認】ねこまろ様(文字サイズ参考)= ai-news.uta-maro.jp は404→現URL要確認
+   ========================================================= */
+:root{
+  --coral:#e8918c;       /* 差し色コーラル */
+  --coral-soft:#f6c9c4;  /* 淡コーラル(下線・帯) */
+  --coral-bg:#fdf3f1;    /* ごく淡いコーラル背景 */
+  --ink:#3a3a3a;         /* 本文の濃グレー */
+  --line:#ececec;        /* 罫線 */
+  --card:#f7f7f7;        /* カード背景 */
+}
+
+/* --- 文字サイズ・行間(スマホ基準で大きめ)--- */
+.entry-content{
+  font-size:18px;        /* もっと大きく=19px */
+  line-height:1.9;
+  color:var(--ink);
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",YuGothic,"Noto Sans JP",sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+.entry-content p{ margin:0 0 1.5em; }
+
+/* --- リンク(差し色)--- */
+.entry-content a{ color:var(--coral); text-decoration:none; border-bottom:1px solid var(--coral-soft); }
+.entry-content a:hover{ border-bottom-color:var(--coral); }
+
+/* --- 見出し --- */
+.entry-content h2{
+  /* すっきり版: 薄グレーのカード背景+角丸を廃止し、左コーラルの細線のみに */
+  font-size:1.3em; line-height:1.55; color:var(--ink); font-weight:700;
+  margin:2.6em 0 1.1em; padding:.05em 0 .15em .7em;
+  border-left:4px solid var(--coral);
+}
+.entry-content h3{
+  font-size:1.18em; color:var(--ink);
+  margin:2em 0 .8em; padding-bottom:.3em; border-bottom:2px solid var(--coral-soft);
+}
+
+/* --- 引用(開示文・体験談)--- */
+.entry-content blockquote{
+  /* 左コーラルライン削除・余白(padding)を半分に */
+  background:var(--coral-bg); border:none;
+  border-radius:8px; margin:1.6em 0; padding:.5em .6em; color:var(--ink);
+}
+.entry-content blockquote p{ margin:0 0 1.5em; }   /* 開示文の段落間隔を本文と同じに */
+.entry-content blockquote p:last-child{ margin-bottom:0; }
+
+/* --- リスト --- */
+.entry-content ul,.entry-content ol{ margin:1.3em 0; padding-left:1.4em; }
+.entry-content li{ margin:.55em 0; }
+.entry-content ul li::marker{ color:var(--coral); }
+
+/* --- 太字 --- */
+.entry-content strong{ color:#2b2b2b; font-weight:700; }
+
+/* --- 表(料金など)--- */
+.entry-content table{ border-collapse:collapse; width:100%; margin:1.5em 0; font-size:.95em; }
+.entry-content th,.entry-content td{ border:1px solid var(--line); padding:.6em .8em; }
+.entry-content th{ background:var(--card); }
+
+/* --- 区切り線 --- */
+.entry-content hr{ border:none; border-top:1px solid var(--line); margin:2em 0; }
+
+/* --- CTAボタン --- */
+.entry-content a.momo-cta{
+  display:inline-block; background:var(--coral); color:#fff !important;
+  border-radius:10px; padding:15px 28px; font-weight:700; text-decoration:none;
+  box-shadow:0 2px 8px rgba(232,145,140,.35);
+}
+
+/* --- 記事タイトル・サイドバー見出し --- */
+.entry-title{ line-height:1.45; margin:0 0 .5em; }
+/* タイトル文字は <a> の中。テーマがaにサイズ・行間を当てるので、リンク側に!importantで指定しないと負ける */
+.entry-title a,.entry-title-link{ font-size:30px !important; line-height:1.45 !important; font-weight:700; color:#2b2b2b; }
+/* スマホ(〜639px)は記事ページのタイトル(H1)を85%に＝30px→25.5px。一覧カードのタイトルは別定義(.archive-entry .entry-title a)なので影響なし */
+@media (max-width:639px){
+  .entry-title a,.entry-title-link{ font-size:25.5px !important; }
+}
+.archive-entry-title a{ color:#2b2b2b; }
+.hatena-module-title{ font-size:1em; color:var(--ink); border-bottom:2px solid var(--coral-soft); padding-bottom:.3em; }
+
+/* --- ブログの説明(ひとこと「使ってわかった快適術」)を元の約1.5倍に --- */
+#blog-description{ font-size:1.5em !important; }
+
+/* --- ブログタイトルをヘッダ画像化＋クリッカブル(2026-06-20) ---
+   #blog-title-content のテキスト(ブログ名#title・サブ#blog-description)は見せず、
+   #blog-title に透過PNGのロゴ(header.png 2400×480)を background で敷く(center/contain=クロップなし)。
+   さらに、はてなのブログ名リンク #title a(href=トップ) をヘッダ全面に透明に広げ、
+   ロゴ画像をクリックするとトップへ戻れるようにする。 */
+#blog-title{
+  background:url('https://raw.githubusercontent.com/momonav/blog-assets/main/header.png?v=260623') center/contain no-repeat #fff;
+  height:110px;             /* PC: 元150と半分75の中間。数字だけで微調整可(100〜130) */
+  padding:0;
+  margin:0;
+  position:relative;        /* 透明リンクの位置基準 */
+}
+#blog-title #blog-description{ display:none !important; }   /* サブタイトルは非表示 */
+#blog-title #title{ margin:0; padding:0; }
+/* ブログ名リンクをヘッダ全面に広げ、文字は画面外へ=画像クリックでトップへ */
+#blog-title #title a{
+  display:block;
+  position:absolute;
+  inset:0;
+  text-indent:-9999px;
+  overflow:hidden;
+  white-space:nowrap;
+}
+@media (max-width:639px){
+  #blog-title{ height:80px; }   /* SP: この大きさでOK(うた様確認済) */
+}
+
+/* --- PCではゆとりを少し足す(スマホが土台)--- */
+@media (min-width:768px){
+  .entry-content{ line-height:1.95; }
+}
+
+/* 著者バイライン(うたまろ表示)を全記事で非表示 */
+.entry-footer .entry-footer-section{display:none !important;}
+
+
+/* =========================================================
+   一覧をカード型グリッドに(2026-06-20)
+   Minimalismの .archive-entries > section.archive-entry をカード化。
+   サムネを上・日付/タイトル/説明を下、スマホ1列/PC2列。
+   ・サムネは a.entry-thumb-link > div.entry-thumb(背景画像)
+   ・個別記事用 .entry-title-link{30px} が一覧にも波及していた崩れもここで上書き解消。
+   ========================================================= */
+.archive-entries{
+  display:grid;
+  grid-template-columns:1fr;     /* スマホ=1列 */
+  gap:18px;
+  margin-top:1em;
+}
+@media (min-width:640px){
+  .archive-entries{ grid-template-columns:1fr 1fr; gap:22px; }  /* PC/タブレット=2列 */
+}
+
+/* サイドバーのモジュール上下間隔を、記事一覧カードのgapと同じに(SP18px/PC22px)。
+   テーマ既定の広いmargin-bottomを上書きして一覧の詰まり具合に揃える(2026-06-20) */
+.hatena-module{ margin-bottom:18px; }
+@media (min-width:640px){
+  .hatena-module{ margin-bottom:22px; }
+}
+
+/* カード本体 */
+.archive-entry{
+  display:flex !important;
+  flex-direction:column;
+  margin:0 !important;
+  padding:0 !important;
+  background:#fff;
+  border:1px solid #f1e1df;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 2px 12px rgba(232,145,140,.14);
+}
+
+/* サムネをカード上部に(DOMではheaderの後だがorderで最上部へ)・全幅・1200:630横長 */
+.archive-entry .entry-thumb-link{
+  order:-1;
+  display:block;
+  width:100% !important;
+  margin:0;
+}
+.archive-entry .entry-thumb{
+  width:100% !important;
+  height:auto !important;
+  aspect-ratio:1200 / 630;
+  background-size:cover;
+  background-position:center;
+  border-radius:0;
+}
+
+/* ヘッダ(日付・タイトル)
+   ⚠️真因対策: はてなテーマはSP(max-width:640px)で .archive-entry-header に
+   width:calc(100% - 90px); float:right を当てる(左サムネ+右テキストの横並び前提)。
+   カード型では不要＝width:100%/float:noneで打ち消し、枠を全幅にする(右余白の根本原因)。 */
+.archive-entry .archive-entry-header{
+  width:100%;
+  float:none;
+  box-sizing:border-box;
+  padding:13px 16px 16px;
+}
+.archive-entry .date.archive-date{
+  font-size:.78em; color:#b6a3a0; font-weight:600; margin:0 0 6px;
+}
+.archive-entry .entry-title{ margin:0; }
+.archive-entry .entry-title a,
+.archive-entry .entry-title-link{
+  font-size:1.05em !important;   /* PCはこのまま(変更しない)・個別記事の30pxは一覧で上書き。SPだけ下で1.3倍 */
+  line-height:1.45 !important;
+  font-weight:700;
+  color:#2b2b2b;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;          /* タイトルは3行まで */
+  overflow:hidden;
+}
+/* SP(スマホ・〜639px)だけタイトルを1.3倍に(PCは触らない) */
+@media (max-width:639px){
+  .archive-entry .entry-title a,
+  .archive-entry .entry-title-link{
+    font-size:1.37em !important;
+    width:100%;
+    box-sizing:border-box;
+  }
+}
+
+/* 説明文(冒頭リード)は一覧カードでは非表示(PC/SP共通・うた様指示2026-06-20) */
+.archive-entry .archive-entry-body{ display:none; }
+
+/* カテゴリ・SNS/スターは一覧では隠してすっきり(記事ページには出る) */
+.archive-entry .categories,
+.archive-entry .archive-entry-tags-wrapper{ display:none; }
+
+/* --- 記事下「関連記事」サムネ: 正方形でくっきり ---
+   理由: はてなの関連記事モジュールが配信する画像は元の1200×630ではなく
+   「100×99の正方形ミニサムネ(cdn.image.st-hatena.com・署名付き)」。
+   これを横長(190×100)に伸ばすと拡大+上下トリミングでボケる&ズームになるため、
+   元サイズ相当の正方形でくっきり表示する(拡大しない=100px固定)。 */
+.related-entries-image{
+  width:100px !important;
+  height:100px !important;
+  object-fit:cover;          /* 歪ませず・拡大せず */
+  border-radius:8px;
+}
+
+/* CTAバナーの下線(コーラル線)を消す＋画像をブロック化 */
+.entry-content a.js-referral-cta,
+.entry-content a.js-referral-cta:hover {
+  border-bottom: none;
+}
+.entry-content a.js-referral-cta img {
+  display: block;
+  margin: 0 auto;
+}
+
+/* === 記事内カード(.momo-card)【2026-06-25 クラス化】===
+   記事HTMLは画像・テキスト・リンクだけ書けばOK。スタイルは全部ここに集約。
+   雛形: <p style="margin:22px 0;"><a class="momo-card" href="リンク">
+           <img src="画像" alt="代替">
+           <span class="momo-card-body">
+             <span class="momo-card-label">📚 ラベル</span>
+             <span class="momo-card-title">タイトル ›</span>
+             <span class="momo-card-desc">説明文</span>
+           </span></a></p>
+   ラベル・説明は省略可。PC=画像左/テキスト右、SP(〜639px)=画像上/テキスト下。
+   margin は外側の<p>が持つので .momo-card には付けない。 */
+.entry-content a.momo-card{
+  display:flex; align-items:center; gap:14px; padding:14px;
+  border:1px solid var(--coral-soft); border-radius:12px; overflow:hidden;
+  background:#fff; box-shadow:0 2px 10px rgba(232,145,140,.18);
+  text-decoration:none; color:var(--ink);
+}
+.entry-content a.momo-card:hover{ border-color:var(--coral); }
+.entry-content a.momo-card > img{ display:block; width:38%; max-width:230px; height:auto; flex-shrink:0; border:none; margin:0; }
+.entry-content .momo-card-body{ flex:1; min-width:0; }
+.entry-content .momo-card-label{ display:block; font-size:.8em; color:var(--coral); font-weight:700; margin-bottom:4px; }
+.entry-content .momo-card-title{ display:block; font-size:1.08em; font-weight:700; color:#2b2b2b; line-height:1.45; }
+.entry-content .momo-card-desc{ display:block; font-size:.85em; color:#777; margin-top:6px; line-height:1.55; }
+@media (max-width:639px){
+  .entry-content a.momo-card{ flex-direction:column; align-items:stretch; }
+  .entry-content a.momo-card > img{ width:100%; max-width:none; }
+}
+
+/* --- (旧)インラインstyleカード用のSP縦並び。クラス化完了後も移行漏れ保険として残置 ---
+   SP(〜639px)で記事内カードを縦並び(画像上・テキスト下)に【全カード一括・汎用化 2026-06-25】---
+   対象=記事本文中の全カード型リンク(申込ガイド/ハブ/料金シミュレータ/関連記事カード等、
+   インラインstyleに display:flex を持つ <a>)。PCは画像左・テキスト右のflex横並び、SPは縦積み。
+   ⚠️セレクタは a[style*="display"](displayの部分一致)で判定する。
+     理由①: はてなは保存経路によってstyleを display:flex / display: flex(スペース有)と揺らすため、
+       完全一致だと編集画面を通った記事で外れる(2026-06-24判明)。部分一致なら両方拾う。
+     理由②: href個別指定をやめ汎用化(2026-06-25)→今後カードを足してもCSS変更が不要。
+       style属性を持つカードだけに当たり、素のテキストリンク(style無し)やCTAバナー(class指定・style無し)は除外。
+   画像: <img>カードは >img を全幅に、CSS背景spanカードは >span:first-child を全幅に(両方書いても互いに無害)。 */
+@media (max-width:639px){
+  .entry-content a[style*="display"]{
+    flex-direction:column !important;
+    align-items:stretch !important;
+  }
+  .entry-content a[style*="display"] > img{
+    width:100% !important;
+    max-width:none !important;
+  }
+  .entry-content a[style*="display"] > span:first-child{
+    width:100% !important;
+    max-width:none !important;
+  }
+}
